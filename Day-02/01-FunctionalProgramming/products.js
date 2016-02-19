@@ -65,4 +65,64 @@ print("Sorting", function(){
             console.table(products);
         });
     });
+    print("Generic Sort [any list by any comparer]", function(){
+        function sort(list, comparerFn){
+            for(var i=0; i<list.length-1; i++)
+                for(var j=i+1; j<list.length; j++){
+                    var item1 = list[i],
+                        item2 = list[j];
+                    if (comparerFn(item1, item2) > 0){
+                        list[i] = list[j];
+                        list[j] = item1;
+                    }
+                }
+        }
+        var productComparerByValue = function(p1, p2){
+            var p1Value = p1.units * p1.cost,
+                p2Value = p2.units * p2.cost;
+            return p1Value - p2Value;
+        }
+        print("Products by value[units * cost]", function(){
+            sort(products, productComparerByValue);
+            console.table(products);
+        });
+    });
+});
+
+print("Filter", function(){
+    print("Filter products by category = 1", function(){
+        function filter(){
+            var result = [];
+            for(var i=0; i<products.length; i++)
+                if (products[i].category === 1)
+                    result.push(products[i]);
+            return result;
+        };
+        var category1Products = filter();
+        console.table(category1Products);
+    });
+    print("Generic filter (any list by any criteria)", function(){
+        function filter(list, criteriaFn){
+            var result = [];
+            for(var i=0; i<list.length; i++)
+                if (criteriaFn(list[i]))
+                    result.push(list[i]);
+            return result;
+        }
+        var category1Criteria = function(product){
+            return product.category === 1;
+        };
+        print("All category-1 products", function(){
+            var category1Products = filter(products, category1Criteria);
+            console.table(category1Products);
+        });
+        var costlyProductCriteria = function(product){
+            return product.cost > 50;
+        };
+
+        print("All costly products [cost > 50]", function(){
+            var costlyProducts = filter(products, costlyProductCriteria);
+            console.table(costlyProducts);
+        })
+    })
 });
