@@ -247,3 +247,47 @@ print("Aggregate", function(){
     var avgCost = sumResult.totalCost / sumResult.count;
     console.log("average cost = ", avgCost);
 });
+
+print("GroupBy", function(){
+   function groupBy(list, keySelectorFn){
+       var result = {};
+       for(var i=0; i<list.length; i++){
+           var key = keySelectorFn(list[i]);
+           if (result[key] === undefined)
+               result[key] =[];
+           result[key].push(list[i]);
+       }
+       return result;
+   }
+   function printGroup(group){
+       for(var key in group){
+           print("key - " + key, function(){
+               console.table(group[key]);
+           });
+       }
+   }
+   print("products by category", function(){
+       var categoryKeySelector = function(product){
+           return product.category;
+       };
+       var productsByCategory = groupBy(products, categoryKeySelector);
+       printGroup(productsByCategory);
+   });
+
+    print("products by cost", function(){
+        var costKeySelector = function(product){
+            return product.cost < 50 ? "affordable" : "costly";
+        };
+        var productsByCost = groupBy(products, costKeySelector);
+        printGroup(productsByCost);
+    });
+});
+
+function after(times, fn){
+    var count = 0;
+    return function(){
+        ++count;
+        if (count > times)
+            return fn.apply(this, arguments);
+    }
+}
