@@ -150,6 +150,15 @@ function getBugs(){
    });
  }
 
+ function getProject(){
+     return fetch("http://localhost:3000/projects/1")
+        .then(function(response){
+         return response.json().then(function(data){
+             return data;
+         });
+     });
+ }
+
 
 function printBugs(){
    var getBugsPromise = getBugs();
@@ -157,3 +166,21 @@ function printBugs(){
      console.table(bugs);
    });
 }
+
+//Promise chaining
+getProject().then(function(project){
+  console.log("project = ", project);
+  return getBugs().then(function(bugs){
+      return bugs;
+  });
+}).then(function(bugs){
+    console.table(bugs);
+});
+
+//Joining promises
+Promise
+  .all([getProject(), getBugs()])
+  .then(function(result){
+      console.log(result[0]);
+      console.table(result[1]);
+   });
