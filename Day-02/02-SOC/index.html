@@ -20,40 +20,47 @@
         String.prototype.toInt = function(){
             return parseInt(this,10);
         };
+        function extend(destination){
+            var sources = Array.prototype.slice.call(arguments,1);
+            sources.forEach(function(source){
+                for(var key in source){
+                    destination[key] = source[key];
+                }
+            });
+        }
+
+        function EventEmitter(){
+            this.__eventHandlers = {};
+        }
+        EventEmitter.prototype.emitChange = function(attrName){
+            var eventHandlerFns = this.__eventHandlers[attrName];
+            eventHandlerFns.forEach(function(eventHandlerFn){
+                if (typeof eventHandlerFn === 'function')
+                    eventHandlerFn();
+            })
+        }
+        EventEmitter.prototype.onChange = function(attrName, eventHandlerFn){
+            if (this.__eventHandlers[attrName] === undefined)
+                this.__eventHandlers[attrName] = [];
+            this.__eventHandlers[attrName].push(eventHandlerFn);
+        };
+
+
+        function ModelBase(){
+            this.__data = {};
+        }
+        ModelBase.prototype.get = function(attrName){
+            return this.__data[attrName];
+        };
+        ModelBase.prototype.set = function(attrName, value){
+            if (value === this.__data[attrName]) return;
+            this.__data[attrName] = value;
+            //trigger change notification for 'basic'
+            this.emitChange(attrName);
+        }
 
         //Model
         function SalaryCalculator(){
-
-            var data = {
-                basic : 0,
-                hra : 0,
-                da : 0,
-                tax : 0,
-                salary : 0
-            }
-            this.get = function(attrName){
-                return data[attrName];
-            };
-            this.set = function(attrName, value){
-                if (value === data[attrName]) return;
-                data[attrName] = value;
-                //trigger change notification for 'basic'
-                var eventHandlerFn = eventHandlers[attrName];
-                if (typeof eventHandlerFn === 'function')
-                    eventHandlerFn();
-            };
-
-            var eventHandlers = {
-                basic : null,
-                hra : null,
-                da : null,
-                tax : null,
-                salary : null
-            };
-            this.onChange = function(attrName, eventHandlerFn){
-                eventHandlers[attrName] = eventHandlerFn;
-            };
-
         }
         SalaryCalculator.prototype.calculate = function(){
             var gross = this.get('basic') + this.get('hra') + this.get('da');
@@ -61,9 +68,13 @@
             this.set('salary', net);
         }
 
+        var modelBase = new ModelBase();
+        var EventEmitter = new EventEmitter();
+
         //View
         $(function(){
             window.calculator = new SalaryCalculator();
+            extend(calculator, modelBase, EventEmitter);
 
             //Reacting to user actions
             $("#txtBasic").change(function(){
