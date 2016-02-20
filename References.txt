@@ -1,0 +1,33 @@
+Books
+======
+Secrets of JavaScrip Ninja - John Resig
+Nicolas Zakas
+    - High Performance JavaScript
+    - JavaScript Patterns
+
+videos
+======
+http://bit.ly/javascript-training-videos
+
+website:
+=========
+JavaScript garden
+
+Newsletters
+===========
+javascript-weekly
+
+reddit.com/r/javascript
+
+Recreate
+=======
+1. Underscore.js
+2. Radio.js
+3. Create a promise api
+4. Crossroads.js
+5. Moment.js
+
+Contact
+=======
+tkmagesh77@gmail.com
+99019-11221

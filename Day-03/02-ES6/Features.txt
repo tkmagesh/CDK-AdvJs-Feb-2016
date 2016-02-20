@@ -1,0 +1,372 @@
+http://es6-features.org/
+
+Const
+const PI = 3.141593;
+PI > 3.0;
+
+Scoping
+Block-Scoped Variables
+for (let i = 0; i < a.length; i++) {
+    let x = a[i];
+    …
+}
+for (let i = 0; i < b.length; i++) {
+    let y = b[i];
+    …
+}
+
+let callbacks = [];
+for (let i = 0; i <= 2; i++) {
+    callbacks[i] = function () { return i * 2; };
+}
+callbacks[0]() === 0;
+callbacks[1]() === 2;
+callbacks[2]() === 4;
+
+
+Block-Scoped Functions
+{
+    function foo () { return 1; }
+    foo() === 1;
+    {
+        function foo () { return 2; }
+        foo() === 2;
+    }
+    foo() === 1;
+}
+
+
+Arrow Functions
+Expression Bodies
+odds  = evens.map(v => v + 1);
+pairs = evens.map(v => ({ even: v, odd: v + 1 }));
+nums  = evens.map((v, i) => v + i);
+
+
+Statement Bodies
+nums.forEach(v => {
+   if (v % 5 === 0)
+       fives.push(v);
+})
+
+Lexical this
+this.nums.forEach((v) => {
+    if (v % 5 === 0)
+        this.fives.push(v);
+});
+
+Extended Parameter Handling
+Default Parameter Values
+function f (x, y = 7, z = 42) {
+    return x + y + z;
+}
+f(1) === 50;
+
+
+Rest Parameter
+function f (x, y, ...a) {
+    return (x + y) * a.length;
+}
+f(1, 2, "hello", true, 7) === 9;
+
+
+Spread Operator
+var params = [ "hello", true, 7 ];
+var other = [ 1, 2, ...params ]; // [ 1, 2, "hello", true, 7 ]
+f(1, 2, ...params) === 9;
+
+var str = "foo";
+var chars = [ ...str ]; // [ "f", "o", "o" ]
+
+
+Template Literals
+String Interpolation
+var customer = { name: "Foo" };
+var card = { amount: 7, product: "Bar", unitprice: 42 };
+message = `Hello ${customer.name},
+want to buy ${card.amount} ${card.product} for
+a total of ${card.amount * card.unitprice} bucks?`;
+
+
+Enhanced Object Properties
+
+Property Shorthand
+obj = { x, y };
+
+Computed Property Names
+obj = {
+    foo: "bar",
+    [ "prop_" + foo() ]: 42
+};
+
+Method Properties
+obj = {
+    foo (a, b) {
+        …
+    },
+    bar (x, y) {
+        …
+    },
+    quux (x, y) {
+        …
+    }
+};
+
+Destructuring Assignment
+Array Matching
+var list = [ 1, 2, 3 ];
+var [ a, , b ] = list;
+[ b, a ] = [ a, b ];
+
+
+Object Matching, Shorthand Notation
+var { op, lhs, rhs } = getASTNode();
+
+
+Parameter Context Matching
+function f ([ name, val ]) {
+    console.log(name, val);
+}
+
+function g ({ name: n, val: v }) {
+    console.log(n, v);
+}
+function h ({ name, val }) {
+    console.log(name, val);
+}
+f([ "bar", 42 ]);
+g({ name: "foo", val:  7 });
+h({ name: "bar", val: 42 });
+
+Fail-Soft Destructuring
+var list = [ 7, 42 ];
+var [ a = 1, b = 2, c = 3, d ] = list;
+a === 7;
+b === 42;
+c === 3;
+d === undefined;
+
+Modules
+Value Export/Import
+//  lib/math.js
+export function sum (x, y) { return x + y };
+export var pi = 3.141593;
+
+//  someApp.js
+import * as math from "lib/math";
+console.log("2π = " + math.sum(math.pi, math.pi));
+
+//  otherApp.js
+import { sum, pi } from "lib/math";
+console.log("2π = " + sum(pi, pi));
+
+Default & Wildcard
+//  lib/mathplusplus.js
+export * from "lib/math";
+export var e = 2.71828182846;
+export default (x) => Math.exp(x);
+
+//  someApp.js
+import exp, { pi, e } from "lib/mathplusplus";
+console.log("e^{π} = " + exp(pi));
+
+Classes
+Class Definition
+class Shape {
+    constructor (id, x, y) {
+        this.id = id;
+        this.move(x, y);
+    }
+    move (x, y) {
+        this.x = x;
+        this.y = y;
+    }
+}
+
+Class Inheritance
+class Rectangle extends Shape {
+    constructor (id, x, y, width, height) {
+        super(id, x, y);
+        this.width  = width;
+        this.height = height;
+    }
+}
+class Circle extends Shape {
+    constructor (id, x, y, radius) {
+        super(id, x, y);
+        this.radius = radius;
+    }
+}
+
+
+Base Class Access
+class Shape {
+    …
+    toString () {
+        return `Shape(${this.id})`
+    }
+}
+class Rectangle extends Shape {
+    constructor (id, x, y, width, height) {
+        super(id, x, y);
+        …
+    }
+    toString () {
+        return "Rectangle > " + super.toString();
+    }
+}
+class Circle extends Shape {
+    constructor (id, x, y, radius) {
+        super(id, x, y);
+        …
+    }
+    toString () {
+        return "Circle > " + super.toString();
+    }
+}
+
+Static Members
+class Rectangle extends Shape {
+    …
+    static defaultRectangle () {
+        return new Rectangle("default", 0, 0, 100, 100);
+    }
+}
+class Circle extends Shape {
+    …
+    static defaultCircle () {
+        return new Circle("default", 0, 0, 100);
+    }
+}
+var defRectangle = Rectangle.defaultRectangle();
+var defCircle    = Circle.defaultCircle();
+
+Getter/Setter
+class Rectangle {
+    constructor (width, height) {
+        this._width  = width;
+        this._height = height;
+    }
+    set width  (width)  { this._width = width;               }
+    get width  ()       { return this._width;                }
+    set height (height) { this._height = height;             }
+    get height ()       { return this._height;               }
+    get area   ()       { return this._width * this._height; }
+};
+var r = new Rectangle(50, 20);
+console.log(r.width, r.height)
+r.area === 1000;
+
+Symbol Type
+Unique and immutable data type to be used as an identifier for object properties. Symbol can have an optional description, but for debugging purposes only.
+
+Symbol Type
+Symbol("foo") !== Symbol("foo");
+const foo = Symbol();
+const bar = Symbol();
+typeof foo === "symbol";
+typeof bar === "symbol";
+let obj = {};
+obj[foo] = "foo";
+obj[bar] = "bar";
+JSON.stringify(obj); // {}
+Object.keys(obj); // []
+Object.getOwnPropertyNames(obj); // []
+Object.getOwnPropertySymbols(obj); // [ foo, bar ]
+
+Global Symbols
+//Global symbols, indexed through unique keys.
+Symbol.for("app.foo") === Symbol.for("app.foo")
+const foo = Symbol.for("app.foo");
+const bar = Symbol.for("app.bar");
+Symbol.keyFor(foo) === "app.foo";
+Symbol.keyFor(bar) === "app.bar";
+typeof foo === "symbol";
+typeof bar === "symbol";
+let obj = {};
+obj[foo] = "foo";
+obj[bar] = "bar";
+JSON.stringify(obj); // {}
+Object.keys(obj); // []
+Object.getOwnPropertyNames(obj); // []
+Object.getOwnPropertySymbols(obj); // [ foo, bar ]
+
+Iterators
+/*Support "iterable" protocol to allow objects to customize their iteration behaviour. Additionally, support "iterator" protocol to produce sequence of values (either finite or infinite). Finally, provide convenient of operator to iterate over all values of an iterable object.*/
+
+Iterator & For-Of Operator
+let fibonacci = {
+    [Symbol.iterator]() {
+        let pre = 0, cur = 1;
+        return {
+           next () {
+               [ pre, cur ] = [ cur, pre + cur ];
+               return { done: false, value: cur };
+           }
+        };
+    }
+}
+
+for (let n of fibonacci) {
+    if (n > 1000)
+        break;
+    console.log(n);
+}
+
+
+Generators
+/*Support for generators, a special case of Iterators containing a generator function, where the control flow can be paused and resumed, in order to produce sequence of values (either finite or infinite).*/
+
+Generator Function, Iterator Protocol
+let fibonacci = {
+    *[Symbol.iterator]() {
+        let pre = 0, cur = 1;
+        for (;;) {
+            [ pre, cur ] = [ cur, pre + cur ];
+            yield cur;
+        }
+    }
+}
+
+for (let n of fibonacci) {
+    if (n > 1000)
+        break;
+    console.log(n);
+}
+
+Generator Function, Direct Use
+function* range (start, end, step) {
+    while (start < end) {
+        yield start;
+        start += step;
+    }
+}
+
+for (let i of range(0, 10, 2)) {
+    console.log(i); // 0, 2, 4, 6, 8
+}
+
+Generator Matching
+Generator Control-Flow
+Map/Set & WeakMap/WeakSet
+Set Data-Structure
+Map Data-Structure
+Weak-Link Data-Structures
+Typed Arrays
+Typed Arrays
+New Built-In Methods
+Object Property Assignment
+Array Element Finding
+String Repeating
+String Searching
+Number Type Checking
+Number Safety Checking
+Number Comparison
+Number Truncation
+Number Sign Determination
+Promises
+Promise Usage
+Promise Combination
+Meta-Programming
+Proxying
+Reflection
